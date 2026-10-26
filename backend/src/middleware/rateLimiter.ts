@@ -1,6 +1,7 @@
 import rateLimit from "express-rate-limit";
 
 export const apiLimiter = rateLimit({
+  validate: { trustProxy: false },
   windowMs: 15 * 60 * 1000,
   limit: 300,
   standardHeaders: true,
@@ -8,6 +9,7 @@ export const apiLimiter = rateLimit({
 });
 
 export const authLimiter = rateLimit({
+  validate: { trustProxy: false },
   windowMs: 15 * 60 * 1000,
   limit: 20,
   standardHeaders: true,

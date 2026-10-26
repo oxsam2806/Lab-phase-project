@@ -139,8 +139,8 @@ const run = async () => {
     }
 
     for (const item of items) {
-      const fileName = `demo-${slugify(item.name)}.svg`;
-      await fs.writeFile(path.join(uploadDir, fileName), buildSvg(item.name, category.name, categorySlug));
+      const svg = buildSvg(item.name, category.name, categorySlug);
+      const imageUrl = `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
 
       await Product.create({
         ...item,
@@ -148,7 +148,7 @@ const run = async () => {
         sku: `DEMO-${String(created + 1).padStart(3, "0")}`,
         category: category._id,
         seller: seller._id,
-        images: [{ url: `/uploads/products/${fileName}` }],
+        images: [{ url: imageUrl }],
       });
       created++;
     }

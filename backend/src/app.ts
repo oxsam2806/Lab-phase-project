@@ -11,6 +11,7 @@ import { notFound, errorHandler } from "./middleware/errorHandler";
 import path from "path";
 
 const app = express();
+if (env.nodeEnv === "production") app.set("trust proxy", true);
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(cors({ origin: env.clientUrl, credentials: true }));
