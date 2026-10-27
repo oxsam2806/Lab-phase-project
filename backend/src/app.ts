@@ -11,7 +11,7 @@ import { notFound, errorHandler } from "./middleware/errorHandler";
 import path from "path";
 
 const app = express();
-if (env.nodeEnv === "production") app.set("trust proxy", true);
+if (env.nodeEnv === "production") app.set("trust proxy", 1);
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(cors({ origin: env.clientUrl, credentials: true }));
@@ -34,6 +34,16 @@ app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use("/api", apiLimiter);
 app.use("/api", routes);
 
+if (env.nodeEnv === "production") {
+  const siteDir = path.join(process.cwd(), "..", "frontend", "dist");
+  app.use(express.static(siteDir));
+  app.use((req, res, next) => {
+    if (req.method !== "GET" || req.path.startsWith("/api") || req.path.startsWith("/uploads")) {
+      return next();
+    }
+    res.sendFile(path.join(siteDir, "index.html"));
+  });
+}
 app.use(notFound);
 app.use(errorHandler);
 
